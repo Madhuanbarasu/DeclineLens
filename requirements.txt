@@ -1,0 +1,6 @@
+pyexasol>=1.0
+pandas>=2.0
+numpy>=1.24
+duckdb>=1.0
+streamlit>=1.30
+pytest>=8.0
