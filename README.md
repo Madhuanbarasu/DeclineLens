@@ -80,7 +80,17 @@ The tests do not just check that code runs:
 
 ## Scale
 
-`python -m declinelens --backend <exasol|duckdb> bench` times the pipeline at 100k, 500k and 1M applicants (up to ~70M what-if evaluations) and writes [docs/BENCHMARK.md](docs/BENCHMARK.md). The committed file holds local DuckDB stand-in numbers; regenerate it on Exasol Personal for your own results.
+`python -m declinelens --backend <exasol|duckdb> bench` times the pipeline at 100k, 500k and 1M applicants and writes [docs/BENCHMARK.md](docs/BENCHMARK.md).
+
+Measured on **Exasol Personal running locally in Podman on a Windows laptop** (recourse step, i.e. the what-if search):
+
+| Applicants | What-if evaluations | Recourse step |
+|---:|---:|---:|
+| 100,000 | 6,879,873 | 1.60 s |
+| 500,000 | 34,635,860 | 5.60 s |
+| 1,000,000 | 69,252,232 | 9.88 s |
+
+Full table, including declined counts and total pipeline time, is in [docs/BENCHMARK.md](docs/BENCHMARK.md).
 
 ## Honest limitations
 
@@ -88,7 +98,7 @@ The tests do not just check that code runs:
 * The model is deliberately a **simple, readable logistic regression**. That is what makes the reasons exact and the recourse search fast. Richer models (for example gradient boosting scored through a UDF) are a natural extension.
 * "Effort" scores for each change are policy inputs a lender would tune. Estimated EMI is `loan / tenure` (no interest) for simplicity.
 * Recommended changes are model estimates, not guarantees, and the letter says so.
-* Development and automated tests ran on DuckDB, which runs the same SQL files. Run the pipeline once on Exasol Personal before relying on it there.
+* The pipeline has been run end to end on Exasol Personal (local deployment) at 50,000 up to 1,000,000 applicants. The unit tests run on DuckDB, which executes the same SQL files, so they need no database.
 
 ## Repository layout
 
