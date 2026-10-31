@@ -116,3 +116,8 @@ Full table, including declined counts and total pipeline time, is in [docs/BENCH
 ## Licence
 
 MIT. See [LICENSE](LICENSE).
+## 🎥 Demo Video
+
+Watch the DeclineLens project demonstration:
+
+[▶ Watch Demo Video] (https://drive.google.com/file/d/1DpLIgaEBVNnmm4gBkXYg1t23KICmTa_K/view?usp=sharing)
