@@ -44,7 +44,8 @@ with tab1:
     a = case["applicant"]
     with c1:
         st.metric("Decision", a["decision"])
-        st.metric("Repayment probability", f"{a['p_repay']:.1%}", f"cutoff {case['cutoff']:.0%}", delta_color="off")
+        st.metric("Repayment probability", f"{a['p_repay']:.1%}")
+        st.caption(f"Approval cutoff: {case['cutoff']:.0%}")
         st.write(f"Loan Rs {a['loan_amount']:,.0f} over {int(a['tenure_months'])} months  \n"
                  f"Income Rs {a['income_monthly']:,.0f}/month, credit score {int(a['credit_score'])}")
     with c2:
@@ -69,12 +70,15 @@ with tab2:
     audit = db.query("SELECT * FROM declinelens.fairness_audit ORDER BY dim_name, grp")
     for col in ["n", "declined_n", "approval_rate", "impact_ratio", "stranded_pct", "avg_best_effort"]:
         audit[col] = pd.to_numeric(audit[col])
+    audit["approval_rate"] = (audit["approval_rate"] * 100).round(1)
+    audit["stranded_pct"] = (audit["stranded_pct"] * 100).round(1)
+    audit["impact_ratio"] = audit["impact_ratio"].round(2)
+    audit["avg_best_effort"] = audit["avg_best_effort"].round(2)
     st.dataframe(audit.rename(columns={
-        "dim_name": "Dimension", "grp": "Group", "n": "Applicants", "approval_rate": "Approval rate",
+        "dim_name": "Dimension", "grp": "Group", "n": "Applicants", "approval_rate": "Approval rate (%)",
         "impact_ratio": "Impact ratio vs best group", "declined_n": "Declined",
-        "stranded_pct": "Declined with no path", "avg_best_effort": "Avg effort of easiest path"}),
-        hide_index=True, width="stretch",
-        column_config={"Approval rate": st.column_config.NumberColumn(format="%.1f%%"),})
+        "stranded_pct": "Declined with no path (%)", "avg_best_effort": "Avg effort of easiest path"}),
+        hide_index=True, width="stretch")
     flagged = audit[audit["impact_ratio"] < 0.8]
     if len(flagged):
         st.error("Impact ratio below 0.8 (four-fifths screen): "
